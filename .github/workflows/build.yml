@@ -1,0 +1,15 @@
+# .github/workflows/build.yml
+# CI/CD Pipeline — created in Step 3 of the guide
+# Replace this file with the complete build.yml from Step 3.
+name: Embedded CI
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+jobs:
+  placeholder:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Replace this with the full pipeline from Step 3"

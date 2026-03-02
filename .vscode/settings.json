@@ -1,0 +1,20 @@
+// .vscode/settings.json
+{
+    // CMake Tools extension settings
+    "cmake.buildDirectory" : "${workspaceFolder}/build",
+    "cmake.generator"      : "Ninja",
+    "cmake.configureArgs"  : ["-DCMAKE_BUILD_TYPE=Debug"],
+    "cmake.buildArgs"      : ["--parallel"],
+ 
+    // Use CMake Tools as the IntelliSense provider
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+ 
+    // OpenOCD path for Cortex-Debug extension
+    "cortex-debug.openocdPath": "/usr/bin/openocd",
+ 
+    // Hide generated build directories from Explorer
+    "files.exclude": {
+        "build*/": true,
+        "drivers/": true
+    }
+}
