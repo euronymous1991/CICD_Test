@@ -5,30 +5,46 @@
 
 find_package(Git QUIET)
 
+set(GIT_HASH "unknown")
+set(GIT_DIRTY "0")
+
 if(GIT_FOUND)
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+        COMMAND ${GIT_EXECUTABLE} rev-parse --is-inside-work-tree
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_HASH
+        RESULT_VARIABLE GIT_WORKTREE_RESULT
+        OUTPUT_VARIABLE GIT_WORKTREE
         OUTPUT_STRIP_TRAILING_WHITESPACE
         ERROR_QUIET
     )
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} status --porcelain
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_DIRTY_CHECK
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
-    )
-else()
-    set(GIT_HASH "unknown")
-    set(GIT_DIRTY_CHECK "")
-endif()
 
-if(GIT_DIRTY_CHECK STREQUAL "")
-    set(GIT_DIRTY "0")
-else()
-    set(GIT_DIRTY "1")
+    if(GIT_WORKTREE_RESULT EQUAL 0 AND GIT_WORKTREE STREQUAL "true")
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            RESULT_VARIABLE GIT_HASH_RESULT
+            OUTPUT_VARIABLE GIT_HASH
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+        )
+
+        if(NOT GIT_HASH_RESULT EQUAL 0 OR GIT_HASH STREQUAL "")
+            set(GIT_HASH "unknown")
+        endif()
+
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} status --porcelain
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            RESULT_VARIABLE GIT_STATUS_RESULT
+            OUTPUT_VARIABLE GIT_DIRTY_CHECK
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+        )
+
+        if(GIT_STATUS_RESULT EQUAL 0 AND NOT GIT_DIRTY_CHECK STREQUAL "")
+            set(GIT_DIRTY "1")
+        endif()
+    endif()
 endif()
 
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
