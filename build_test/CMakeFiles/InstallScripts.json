@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/CI_CD/test1/stm32-nucleo-cicd/build_test/cmake_install.cmake",
+		"D:/CI_CD/test1/stm32-nucleo-cicd/build_test/tests/cmake_install.cmake",
+		"D:/CI_CD/test1/stm32-nucleo-cicd/build_test/_deps/unity-build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

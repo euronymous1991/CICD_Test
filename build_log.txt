@@ -1,0 +1,36 @@
+Change Dir: 'D:/CI_CD/test1/stm32-nucleo-cicd/build_test'
+
+Run Build Command(s): C:/Users/VYTAUT~1/AppData/Local/MICROS~1/WinGet/Links/ninja.exe -v
+[1/1] C:\Windows\system32\cmd.exe /C "cd . && C:\PROGRA~1\LLVM\bin\clang.exe -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console -fuse-ld=lld-link tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj tests/CMakeFiles/test_led_manager.dir/__/app/Src/led_manager.c.obj tests/CMakeFiles/test_led_manager.dir/mocks/mock_bsp.c.obj tests/CMakeFiles/test_led_manager.dir/__/_deps/unity-src/src/unity.c.obj -o tests\test_led_manager.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:tests\test_led_manager.lib -Xlinker /pdb:tests\test_led_manager.pdb -Xlinker /version:0.0   -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
+FAILED: [code=1] tests/test_led_manager.exe 
+C:\Windows\system32\cmd.exe /C "cd . && C:\PROGRA~1\LLVM\bin\clang.exe -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console -fuse-ld=lld-link tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj tests/CMakeFiles/test_led_manager.dir/__/app/Src/led_manager.c.obj tests/CMakeFiles/test_led_manager.dir/mocks/mock_bsp.c.obj tests/CMakeFiles/test_led_manager.dir/__/_deps/unity-src/src/unity.c.obj -o tests\test_led_manager.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:tests\test_led_manager.lib -Xlinker /pdb:tests\test_led_manager.pdb -Xlinker /version:0.0   -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
+lld-link: error: undefined symbol: LedManager_GetState
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:15
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Init_SetsLedOff)
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:22
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Set_TurnsLedOn)
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:30
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Set_TurnsLedOff)
+>>> referenced 4 more times
+
+lld-link: error: undefined symbol: LedManager_Set
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:21
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Set_TurnsLedOn)
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:28
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Set_TurnsLedOff)
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:29
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Set_TurnsLedOff)
+>>> referenced 2 more times
+
+lld-link: error: undefined symbol: LedManager_Toggle
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:36
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Toggle_InvertsState)
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:38
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Toggle_InvertsState)
+
+lld-link: error: undefined symbol: LedManager_Blink
+>>> referenced by D:\CI_CD\test1\stm32-nucleo-cicd\tests\unit\test_led_manager.c:45
+>>>               tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj:(test_LedManager_Blink_TogglesAfterHalfPeriod)
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.
+

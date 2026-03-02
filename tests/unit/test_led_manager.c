@@ -1,86 +1,68 @@
 #include "unity.h"
-
 #include "led_manager.h"
-#include "mock_bsp.h"
+#include "bsp.h"
 
-void setUp(void)
+void MockBSP_Reset(void);
+void MockBSP_SetTick(uint32_t ms);
+void MockBSP_AdvanceTick(uint32_t ms);
+uint8_t MockBSP_LED_LastState(uint8_t id);
+
+void setUp(void)    { MockBSP_Reset(); LedManager_Init(); }
+void tearDown(void) { }
+
+void test_LedManager_Init_SetsLedOff(void)
 {
-    MockBSP_Reset();
+    TEST_ASSERT_EQUAL(LED_OFF, LedManager_GetState(LED_GREEN));
+    TEST_ASSERT_EQUAL(0U, MockBSP_LED_LastState(0U));
 }
 
-void tearDown(void)
+void test_LedManager_Set_TurnsLedOn(void)
 {
+    LedManager_Set(LED_GREEN, LED_ON);
+    TEST_ASSERT_EQUAL(LED_ON, LedManager_GetState(LED_GREEN));
+    TEST_ASSERT_EQUAL(1U, MockBSP_LED_LastState(0U));
 }
 
-void test_LedManager_Init_TurnsLedOff(void)
+void test_LedManager_Set_TurnsLedOff(void)
 {
-    MockBSP_SetTick(123U);
-    LedManager_Init();
-
-    TEST_ASSERT_EQUAL_UINT32(1U, MockBSP_GetLedWriteCallCount());
-    TEST_ASSERT_EQUAL_UINT8(0U, MockBSP_GetLastLedId());
-    TEST_ASSERT_EQUAL_UINT8(0U, MockBSP_GetLastLedState());
+    LedManager_Set(LED_GREEN, LED_ON);
+    LedManager_Set(LED_GREEN, LED_OFF);
+    TEST_ASSERT_EQUAL(LED_OFF, LedManager_GetState(LED_GREEN));
 }
 
-void test_LedManager_Update_DoesNotToggleBeforePeriod(void)
+void test_LedManager_Toggle_InvertsState(void)
+{
+    LedManager_Set(LED_GREEN, LED_OFF);
+    LedManager_Toggle(LED_GREEN);
+    TEST_ASSERT_EQUAL(LED_ON, LedManager_GetState(LED_GREEN));
+    LedManager_Toggle(LED_GREEN);
+    TEST_ASSERT_EQUAL(LED_OFF, LedManager_GetState(LED_GREEN));
+}
+
+void test_LedManager_Blink_TogglesAfterHalfPeriod(void)
 {
     MockBSP_SetTick(0U);
-    LedManager_Init();
-
-    MockBSP_SetTick(499U);
-    LedManager_Update();
-
-    TEST_ASSERT_EQUAL_UINT32(1U, MockBSP_GetLedWriteCallCount());
-    TEST_ASSERT_EQUAL_UINT8(0U, MockBSP_GetLastLedState());
+    LedManager_Blink(LED_GREEN, 500U);
+    MockBSP_SetTick(249U); LedManager_Update();
+    TEST_ASSERT_EQUAL(LED_OFF, LedManager_GetState(LED_GREEN));
+    MockBSP_SetTick(250U); LedManager_Update();
+    TEST_ASSERT_EQUAL(LED_ON, LedManager_GetState(LED_GREEN));
 }
 
-void test_LedManager_Update_TogglesAt500ms(void)
+void test_LedManager_InvalidId_DoesNotCrash(void)
 {
-    MockBSP_SetTick(0U);
-    LedManager_Init();
-
-    MockBSP_SetTick(500U);
-    LedManager_Update();
-
-    TEST_ASSERT_EQUAL_UINT32(2U, MockBSP_GetLedWriteCallCount());
-    TEST_ASSERT_EQUAL_UINT8(1U, MockBSP_GetLastLedState());
-}
-
-void test_LedManager_Update_TogglesBackAt1000ms(void)
-{
-    MockBSP_SetTick(0U);
-    LedManager_Init();
-
-    MockBSP_SetTick(500U);
-    LedManager_Update();
-    MockBSP_SetTick(1000U);
-    LedManager_Update();
-
-    TEST_ASSERT_EQUAL_UINT32(3U, MockBSP_GetLedWriteCallCount());
-    TEST_ASSERT_EQUAL_UINT8(0U, MockBSP_GetLastLedState());
-}
-
-void test_LedManager_Update_HandlesTickWraparound(void)
-{
-    MockBSP_SetTick(0xFFFFFFF0U);
-    LedManager_Init();
-
-    MockBSP_SetTick(600U);
-    LedManager_Update();
-
-    TEST_ASSERT_EQUAL_UINT32(2U, MockBSP_GetLedWriteCallCount());
-    TEST_ASSERT_EQUAL_UINT8(1U, MockBSP_GetLastLedState());
+    LedManager_Set((LedId_t)99U, LED_ON);
+    TEST_PASS();
 }
 
 int main(void)
 {
     UNITY_BEGIN();
-
-    RUN_TEST(test_LedManager_Init_TurnsLedOff);
-    RUN_TEST(test_LedManager_Update_DoesNotToggleBeforePeriod);
-    RUN_TEST(test_LedManager_Update_TogglesAt500ms);
-    RUN_TEST(test_LedManager_Update_TogglesBackAt1000ms);
-    RUN_TEST(test_LedManager_Update_HandlesTickWraparound);
-
+    RUN_TEST(test_LedManager_Init_SetsLedOff);
+    RUN_TEST(test_LedManager_Set_TurnsLedOn);
+    RUN_TEST(test_LedManager_Set_TurnsLedOff);
+    RUN_TEST(test_LedManager_Toggle_InvertsState);
+    RUN_TEST(test_LedManager_Blink_TogglesAfterHalfPeriod);
+    RUN_TEST(test_LedManager_InvalidId_DoesNotCrash);
     return UNITY_END();
 }

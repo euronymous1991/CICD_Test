@@ -1,10 +1,5 @@
-# tests/CMakeLists.txt
-# Unit test build — runs on host PC using GCC, NOT arm-none-eabi-gcc.
-# Included only when CMAKE_CROSSCOMPILING is FALSE (no toolchain file passed).
-
 cmake_minimum_required(VERSION 3.20)
 
-# Download Unity test framework
 include(FetchContent)
 FetchContent_Declare(
     unity
@@ -14,20 +9,22 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(unity)
 
+if(WIN32)
+    set(TEST_COMPILE_FLAGS -Wall -Wextra -DUNIT_TEST -g -O0)
+    set(TEST_LINK_FLAGS "")
+else()
+    set(TEST_COMPILE_FLAGS -Wall -Wextra -DUNIT_TEST -fprofile-arcs -ftest-coverage -g -O0)
+    set(TEST_LINK_FLAGS -fprofile-arcs -ftest-coverage)
+endif()
+
 set(TEST_INCLUDE_DIRS
     ${CMAKE_SOURCE_DIR}/app/Inc
     ${CMAKE_SOURCE_DIR}/bsp/Inc
     ${CMAKE_SOURCE_DIR}/tests/mocks
+    ${CMAKE_BINARY_DIR}/generated
     ${unity_SOURCE_DIR}/src
 )
 
-set(TEST_COMPILE_FLAGS
-    -Wall -Wextra -DUNIT_TEST
-    -fprofile-arcs -ftest-coverage
-    -g -O0
-)
-
-# Macro to register a unit test executable
 macro(add_unit_test TEST_NAME)
     cmake_parse_arguments(ARG "" "" "SOURCES;MOCKS" ${ARGN})
     add_executable(${TEST_NAME}
@@ -37,11 +34,12 @@ macro(add_unit_test TEST_NAME)
     )
     target_include_directories(${TEST_NAME} PRIVATE ${TEST_INCLUDE_DIRS})
     target_compile_options(${TEST_NAME} PRIVATE ${TEST_COMPILE_FLAGS})
-    target_link_options(${TEST_NAME} PRIVATE -fprofile-arcs -ftest-coverage)
+    if(NOT "${TEST_LINK_FLAGS}" STREQUAL "")
+        target_link_options(${TEST_NAME} PRIVATE ${TEST_LINK_FLAGS})
+    endif()
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 endmacro()
 
-# Register test executables
 add_unit_test(test_led_manager
     SOURCES
         ${CMAKE_SOURCE_DIR}/tests/unit/test_led_manager.c

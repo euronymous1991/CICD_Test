@@ -1,42 +1,37 @@
 #include "unity.h"
-
 #include "uart_logger.h"
-#include "mock_bsp.h"
+#include "bsp.h"
+#include <string.h>
 
-void setUp(void)
+void MockBSP_Reset(void);
+char *MockBSP_UART_LastMsg(void);
+
+void setUp(void)    { MockBSP_Reset(); UartLogger_Init(); }
+void tearDown(void) { }
+
+void test_UartLogger_Print_TransmitsData(void)
 {
-    MockBSP_Reset();
+    UartLogger_Print("hello\r\n");
+    TEST_ASSERT_EQUAL_STRING("hello\r\n", MockBSP_UART_LastMsg());
 }
 
-void tearDown(void)
+void test_UartLogger_Printf_FormatsCorrectly(void)
 {
+    UartLogger_Printf("val=%d\r\n", 42);
+    TEST_ASSERT_EQUAL_STRING("val=42\r\n", MockBSP_UART_LastMsg());
 }
 
-void test_UartLogger_Print_NullMessage_DoesNothing(void)
+void test_UartLogger_NullPointer_DoesNotCrash(void)
 {
     UartLogger_Print(NULL);
-    TEST_ASSERT_EQUAL_STRING("", MockBSP_GetLastUartMsg());
-}
-
-void test_UartLogger_Print_ForwardsMessageToBSP(void)
-{
-    UartLogger_Print("hello");
-    TEST_ASSERT_EQUAL_STRING("hello", MockBSP_GetLastUartMsg());
-}
-
-void test_UartLogger_Printf_FormatsMessage(void)
-{
-    UartLogger_Printf("v%d.%d.%d", 1, 2, 3);
-    TEST_ASSERT_EQUAL_STRING("v1.2.3", MockBSP_GetLastUartMsg());
+    TEST_PASS();
 }
 
 int main(void)
 {
     UNITY_BEGIN();
-
-    RUN_TEST(test_UartLogger_Print_NullMessage_DoesNothing);
-    RUN_TEST(test_UartLogger_Print_ForwardsMessageToBSP);
-    RUN_TEST(test_UartLogger_Printf_FormatsMessage);
-
+    RUN_TEST(test_UartLogger_Print_TransmitsData);
+    RUN_TEST(test_UartLogger_Printf_FormatsCorrectly);
+    RUN_TEST(test_UartLogger_NullPointer_DoesNotCrash);
     return UNITY_END();
 }

@@ -1,0 +1,13 @@
+# ninja log v7
+17	394	7941767419776988	tests/CMakeFiles/test_led_manager.dir/__/app/Src/led_manager.c.obj	cce96fc24a32d902
+46	406	7941767420067323	tests/CMakeFiles/test_uart_logger.dir/unit/test_uart_logger.c.obj	4dbea7cc4fd84083
+8	416	7941767419701884	tests/CMakeFiles/test_led_manager.dir/unit/test_led_manager.c.obj	fe4aed6f9614a7aa
+22	425	7941767419857331	tests/CMakeFiles/test_led_manager.dir/mocks/mock_bsp.c.obj	da5b82ec2e87b1f8
+51	438	7941767420147297	tests/CMakeFiles/test_uart_logger.dir/__/app/Src/uart_logger.c.obj	b0c9c9db19d76ca9
+32	532	7941767419977329	tests/CMakeFiles/test_led_manager.dir/__/_deps/unity-src/src/unity.c.obj	6e1063a643ebdd0b
+400	587	7941767423602444	tests/CMakeFiles/test_uart_logger.dir/mocks/mock_bsp.c.obj	574c537b11004274
+419	738	7941767423802456	_deps/unity-build/CMakeFiles/unity.dir/src/unity.c.obj	b4204492d09820
+410	747	7941767423712442	tests/CMakeFiles/test_uart_logger.dir/__/_deps/unity-src/src/unity.c.obj	4d1a556f048b82d7
+534	903	7941767424968180	tests/test_led_manager.exe	f42e7f422a0247b4
+739	972	7941767426998198	_deps/unity-build/libunity.a	be5e012455593f38
+751	1030	7941767427108191	tests/test_uart_logger.exe	3123b29aeb3b0c36

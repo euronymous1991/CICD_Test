@@ -1,0 +1,50 @@
+Start testing: Mar 02 19:45 FLE Standard Time
+----------------------------------------------------------
+1/2 Testing: test_led_manager
+1/2 Test: test_led_manager
+Command: "D:/CI_CD/test1/stm32-nucleo-cicd/build_test/tests/test_led_manager.exe"
+Directory: D:/CI_CD/test1/stm32-nucleo-cicd/build_test/tests
+"test_led_manager" start time: Mar 02 19:45 FLE Standard Time
+Output:
+----------------------------------------------------------
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_led_manager.c:61:test_LedManager_Init_SetsLedOff:PASS
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_led_manager.c:62:test_LedManager_Set_TurnsLedOn:PASS
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_led_manager.c:63:test_LedManager_Set_TurnsLedOff:PASS
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_led_manager.c:64:test_LedManager_Toggle_InvertsState:PASS
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_led_manager.c:65:test_LedManager_Blink_TogglesAfterHalfPeriod:PASS
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_led_manager.c:66:test_LedManager_InvalidId_DoesNotCrash:PASS
+
+-----------------------
+6 Tests 0 Failures 0 Ignored 
+OK
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"test_led_manager" end time: Mar 02 19:45 FLE Standard Time
+"test_led_manager" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: test_uart_logger
+2/2 Test: test_uart_logger
+Command: "D:/CI_CD/test1/stm32-nucleo-cicd/build_test/tests/test_uart_logger.exe"
+Directory: D:/CI_CD/test1/stm32-nucleo-cicd/build_test/tests
+"test_uart_logger" start time: Mar 02 19:45 FLE Standard Time
+Output:
+----------------------------------------------------------
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_uart_logger.c:33:test_UartLogger_Print_TransmitsData:PASS
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_uart_logger.c:34:test_UartLogger_Printf_FormatsCorrectly:PASS
+D:/CI_CD/test1/stm32-nucleo-cicd/tests/unit/test_uart_logger.c:35:test_UartLogger_NullPointer_DoesNotCrash:PASS
+
+-----------------------
+3 Tests 0 Failures 0 Ignored 
+OK
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"test_uart_logger" end time: Mar 02 19:45 FLE Standard Time
+"test_uart_logger" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Mar 02 19:45 FLE Standard Time

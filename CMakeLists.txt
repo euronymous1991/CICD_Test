@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
 
-# -- Toolchain file MUST be set before project() ---------------------------
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain-arm-none-eabi.cmake"
@@ -13,29 +12,22 @@ project(stm32-nucleo-cicd
     LANGUAGES C CXX ASM
 )
 
-# -- Language standards -----------------------------------------------------
 set(CMAKE_C_STANDARD          11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD        17)
 
-# -- Load MCU-specific flags ------------------------------------------------
 include(cmake/stm32f401re.cmake)
 
-# -- Host unit tests (when not cross-compiling) -----------------------------
+# Version runs for BOTH firmware and test builds
+include(cmake/version.cmake)
+
+# Host unit tests
 if(NOT CMAKE_CROSSCOMPILING)
     enable_testing()
     add_subdirectory(tests)
     return()
 endif()
 
-# -- Version info (git hash + build date) -----------------------------------
-# Runs at every cmake configure step, generates build/generated/version_git.h
-include(cmake/version.cmake)
-
-# -- Global compiler flags --------------------------------------------------
-# NOTE: Each generator expression is on its own line with a single flag.
-# Multiple flags inside one $<...> break on Windows because cmd.exe treats
-# > as output redirection.
 add_compile_options(
     ${MCU_ARCH_FLAGS}
     -Wall
@@ -46,14 +38,11 @@ add_compile_options(
     -ffunction-sections
     -fdata-sections
     -fno-common
-    # Debug flags (one per line - required on Windows)
     $<$<CONFIG:Debug>:-g3>
     $<$<CONFIG:Debug>:-O0>
     $<$<CONFIG:Debug>:-DDEBUG=1>
-    # Release flags
     $<$<CONFIG:Release>:-O2>
     $<$<CONFIG:Release>:-DNDEBUG>
-    # RelWithDebInfo flags
     $<$<CONFIG:RelWithDebInfo>:-O2>
     $<$<CONFIG:RelWithDebInfo>:-g1>
 )
@@ -61,14 +50,10 @@ add_compile_options(
 add_compile_definitions(${MCU_DEFINES})
 add_link_options(${MCU_ARCH_FLAGS} ${MCU_LINKER_FLAGS})
 
-# -- Source file collection -------------------------------------------------
-
-# HAL driver sources - auto-discovered from CubeMX output
 file(GLOB HAL_SOURCES CONFIGURE_DEPENDS
     Drivers/STM32F4xx_HAL_Driver/Src/*.c
 )
 
-# CubeMX-generated core files
 set(CORE_SOURCES
     Core/Src/main.c
     Core/Src/gpio.c
@@ -80,7 +65,6 @@ set(CORE_SOURCES
     startup_stm32f401xe.s
 )
 
-# Application sources (explicitly listed - add each new file here)
 set(APP_SOURCES
     app/Src/app.c
     app/Src/led_manager.c
@@ -88,7 +72,6 @@ set(APP_SOURCES
     bsp/Src/bsp.c
 )
 
-# -- Firmware executable ----------------------------------------------------
 add_executable(${PROJECT_NAME}
     ${CORE_SOURCES}
     ${APP_SOURCES}
@@ -101,24 +84,19 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${MCU_INCLUDE_DIRS}
-    ${CMAKE_BINARY_DIR}/generated   # version_git.h lives here
+    ${CMAKE_BINARY_DIR}/generated
     app/Inc
     bsp/Inc
 )
 
-# Suppress warnings on ST HAL library sources - external code we do not
-# control. -w disables all warnings for these files only. Our app/ and
-# bsp/ sources still get full -Wall -Wextra treatment.
 set_source_files_properties(${HAL_SOURCES} PROPERTIES
     COMPILE_FLAGS "-w"
 )
 
-# Linker script
 target_link_options(${PROJECT_NAME} PRIVATE
     -T${CMAKE_SOURCE_DIR}/STM32F401RETx_FLASH.ld
 )
 
-# -- Post-build: generate flashable artifacts -------------------------------
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -O ihex
             $<TARGET_FILE:${PROJECT_NAME}>
@@ -130,8 +108,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMENT "Generating .hex and .bin -- check memory usage above"
 )
 
-# -- HIL test firmware (optional) ------------------------------------------
-option(HIL_BUILD "Build HIL test firmware with test command protocol" OFF)
+option(HIL_BUILD "Build HIL test firmware" OFF)
 
 if(HIL_BUILD)
     add_executable(${PROJECT_NAME}-hil
@@ -140,9 +117,7 @@ if(HIL_BUILD)
         ${HAL_SOURCES}
         app/Src/hil_protocol.c
     )
-    set_target_properties(${PROJECT_NAME}-hil PROPERTIES
-        SUFFIX ".elf"
-    )
+    set_target_properties(${PROJECT_NAME}-hil PROPERTIES SUFFIX ".elf")
     target_include_directories(${PROJECT_NAME}-hil PRIVATE
         ${MCU_INCLUDE_DIRS}
         ${CMAKE_BINARY_DIR}/generated
