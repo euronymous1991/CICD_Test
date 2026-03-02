@@ -3,11 +3,12 @@
 
 #include <stdint.h>
 
-void        MockBSP_Reset(void);
-void        MockBSP_SetTick(uint32_t tickMs);
-uint32_t    MockBSP_GetLedWriteCallCount(void);
-uint8_t     MockBSP_GetLastLedId(void);
-uint8_t     MockBSP_GetLastLedState(void);
-const char *MockBSP_GetLastUartMsg(void);
+void     MockBSP_Reset(void);
+void     MockBSP_SetTick(uint32_t ms);
+void     MockBSP_AdvanceTick(uint32_t ms);
+void     MockBSP_SetButton(uint8_t v);
+uint8_t  MockBSP_LED_LastState(uint8_t id);
+char    *MockBSP_UART_LastMsg(void);
+uint32_t MockBSP_UART_PrintCallCount(void);
 
 #endif /* MOCK_BSP_H */

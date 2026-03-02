@@ -53,3 +53,13 @@ add_unit_test(test_uart_logger
     MOCKS
         ${CMAKE_SOURCE_DIR}/tests/mocks/mock_bsp.c
 )
+
+add_unit_test(test_app
+    SOURCES
+        ${CMAKE_SOURCE_DIR}/tests/unit/test_app.c
+        ${CMAKE_SOURCE_DIR}/app/Src/app.c
+        ${CMAKE_SOURCE_DIR}/app/Src/uart_logger.c
+        ${CMAKE_SOURCE_DIR}/app/Src/led_manager.c
+    MOCKS
+        ${CMAKE_SOURCE_DIR}/tests/mocks/mock_bsp.c
+)
