@@ -3,12 +3,14 @@
 # Queries git for the current commit hash and dirty status,
 # then generates build/generated/version_git.h from the template.
 
+option(ENABLE_GIT_VERSION_METADATA "Embed git hash/dirty state in version header" ON)
+
 find_package(Git QUIET)
 
 set(GIT_HASH "unknown")
 set(GIT_DIRTY "0")
 
-if(GIT_FOUND)
+if(ENABLE_GIT_VERSION_METADATA AND GIT_FOUND AND NOT DEFINED ENV{GITHUB_ACTIONS})
     execute_process(
         COMMAND ${GIT_EXECUTABLE} rev-parse --is-inside-work-tree
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}

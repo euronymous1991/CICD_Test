@@ -17,6 +17,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          set-safe-directory: true
+
+      - name: Git sanity
+        run: |
+          git rev-parse --is-inside-work-tree || true
+          git rev-parse --short HEAD || true
 
       - name: Install ARM toolchain
         run: |
@@ -50,6 +57,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          set-safe-directory: true
+
+      - name: Git sanity
+        run: |
+          git rev-parse --is-inside-work-tree || true
+          git rev-parse --short HEAD || true
 
       - name: Install dependencies
         run: |
