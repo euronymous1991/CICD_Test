@@ -1,15 +1,85 @@
 # .github/workflows/build.yml
-# CI/CD Pipeline — created in Step 3 of the guide
-# Replace this file with the complete build.yml from Step 3.
+
 name: Embedded CI
+
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+
 jobs:
-  placeholder:
+
+  # ── Job 1: Build firmware ─────────────────────────────────────────────
+  firmware:
+    name: Firmware Build
     runs-on: ubuntu-22.04
+
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Replace this with the full pipeline from Step 3"
+
+      - name: Install ARM toolchain
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y gcc-arm-none-eabi cmake ninja-build
+
+      - name: Configure
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=cmake/toolchain-arm-none-eabi.cmake \
+            -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-Debug
+          path: |
+            build/*.elf
+            build/*.bin
+            build/*.hex
+            build/*.map
+
+  # ── Job 2: Unit tests ─────────────────────────────────────────────────
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y gcc g++ cmake ninja-build lcov
+
+      - name: Configure test build
+        run: |
+          cmake -S . -B build_test -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_TOOLCHAIN_FILE=""
+
+      - name: Build tests
+        run: cmake --build build_test
+
+      - name: Run tests
+        run: ctest --test-dir build_test --output-on-failure
+
+      - name: Generate coverage report
+        run: |
+          lcov --capture \
+               --directory build_test \
+               --output-file coverage.info \
+               --ignore-errors mismatch
+          lcov --remove coverage.info \
+               '*/unity/*' '*/tests/*' '*/_deps/*' '/usr/*' \
+               --output-file coverage.info
+          lcov --summary coverage.info
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.info
