@@ -19,7 +19,8 @@ void     BSP_LED_Write(uint8_t ledId, uint8_t state);
 uint8_t  BSP_LED_Read (uint8_t ledId);
 
 /* --- Timing --- */
-uint32_t BSP_GetTickMs(void);
+uint32_t BSP_GetTickMs(void);    /* SysTick-driven — main time source        */
+uint32_t BSP_GetTim2Ticks(void); /* TIM2-driven    — reserved for future use */
 void     BSP_DelayMs (uint32_t ms);
 
 /* --- UART --- */

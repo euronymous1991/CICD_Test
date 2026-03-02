@@ -21,24 +21,28 @@
 #include <string.h>
 
 /* ── Internal state ──────────────────────────────────────────────────────── */
-static volatile uint32_t s_tickMs = 0U;
+/* s_tim2Ticks is kept separate from the system tick.
+ * Use it for anything TIM2-specific (PWM measurement, profiling, etc.)
+ * Do NOT use it as the main time source — use BSP_GetTickMs() instead. */
+static volatile uint32_t s_tim2Ticks = 0U;
 
 /* ── BSP_Init ────────────────────────────────────────────────────────────── */
 void BSP_Init(void)
 {
 #ifndef UNIT_TEST
-    /* Start TIM2 interrupt — fires every 1ms, increments s_tickMs */
+    /* Start TIM2 interrupt — fires every 1ms, increments s_tim2Ticks.
+     * System tick (HAL_GetTick) is already running from SysTick/HAL_Init. */
     HAL_TIM_Base_Start_IT(&htim2);
 #endif
 }
 
-/* ── TIM2 callback — called by HAL every 1ms ─────────────────────────────── */
+/* ── TIM2 callback — kept for future use ─────────────────────────────────── */
 #ifndef UNIT_TEST
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM2)
     {
-        s_tickMs++;
+        s_tim2Ticks++;   /* available via BSP_GetTim2Ticks() if needed */
     }
 }
 #endif
@@ -67,17 +71,30 @@ uint8_t BSP_LED_Read(uint8_t ledId)
 }
 
 /* ── Timing ───────────────────────────────────────────────────────────────── */
+
+/* Main time source — driven by SysTick via HAL_IncTick() in SysTick_Handler.
+ * Always valid as long as HAL_Init() has been called. */
 uint32_t BSP_GetTickMs(void)
 {
-    return s_tickMs;
+#ifndef UNIT_TEST
+    return HAL_GetTick();
+#else
+    return 0U;
+#endif
+}
+
+/* Secondary counter driven by TIM2 ISR — use for TIM2-specific purposes. */
+uint32_t BSP_GetTim2Ticks(void)
+{
+    return s_tim2Ticks;
 }
 
 void BSP_DelayMs(uint32_t ms)
 {
 #ifndef UNIT_TEST
-    HAL_Delay(ms);
+    HAL_Delay(ms);   /* HAL_Delay uses HAL_GetTick() internally */
 #else
-    s_tickMs += ms;
+    (void)ms;
 #endif
 }
 
