@@ -1,0 +1,44 @@
+# .gitignore for STM32 CMake project
+ 
+# ── Build directories ────────────────────────────────────────────────
+build/
+build-*/
+ 
+# ── Compiled firmware artifacts (CI generates these as downloadable artifacts)
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+*.axf
+ 
+# ── VS Code local state (keep settings.json and launch.json)
+.vscode/*.log
+.vscode/ipch/
+ 
+# ── STM32CubeIDE project files (we use VS Code + CMake)
+.settings/
+.cproject
+.project
+*.launch
+Debug/
+Release/
+ 
+# ── Python cache (for HIL test scripts)
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+ 
+# ── Test coverage output
+coverage/
+*.gcda
+*.gcno
+*.info
+ 
+# ── OS generated files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
