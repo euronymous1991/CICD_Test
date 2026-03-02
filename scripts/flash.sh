@@ -5,7 +5,7 @@
 set -euo pipefail
  
 BINARY="${1:-build/stm32-nucleo-cicd.bin}"
-FLASH_ADDR="0x80000000"
+FLASH_ADDR="0x08000000"
 SWD_KHZ="${SWD_KHZ:-1000}"
  
 if [[ ! -f "$BINARY" ]]; then

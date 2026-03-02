@@ -1,24 +1,26 @@
-// .vscode/launch.json
 {
     "version": "0.2.0",
     "configurations": [
         {
-            "name"          : "Debug STM32 (OpenOCD)",
-            "type"          : "cortex-debug",
-            "request"       : "launch",
-            "servertype"    : "openocd",
-            "executable"    : "${workspaceFolder}/build/stm32-nucleo-cicd",
-            "configFiles"   : [
+            "name"              : "Debug STM32 (OpenOCD)",
+            "type"              : "cortex-debug",
+            "request"           : "launch",
+            "servertype"        : "openocd",
+            "openOCDPath"       : "C:/openocd/bin/openocd.exe",
+            "executable"        : "${workspaceFolder}/build/stm32-nucleo-cicd.elf",
+            "configFiles"       : [
                 "interface/stlink.cfg",
                 "target/stm32f4x.cfg"
             ],
-            "svdFile"       : "${workspaceFolder}/STM32F401.svd",
-            "runToEntryPoint": "main",
-            "preLaunchTask" : "CMake Build",
-            "showDevDebugOutput": "none",
             "openOCDLaunchCommands": [
-                "adapter speed 2000"
-            ]
+                "transport select hla_swd",
+                "adapter speed 2000",
+                "reset_config srst_only srst_nogate connect_assert_srst"
+            ],
+            "svdFile"           : "${workspaceFolder}/STM32F401.svd",
+            "runToEntryPoint"   : "main",
+            "preLaunchTask"     : "CMake Build",
+            "showDevDebugOutput": "none"
         }
     ]
 }

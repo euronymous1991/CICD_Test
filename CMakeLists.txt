@@ -91,6 +91,13 @@ add_executable(${PROJECT_NAME}
     ${HAL_SOURCES}
 )
 
+# Explicitly name the output file with .elf extension for clarity.
+# $<TARGET_FILE:${PROJECT_NAME}> in post-build commands picks this up
+# automatically, so objcopy / objsize need no changes.
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    SUFFIX ".elf"
+)
+
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${MCU_INCLUDE_DIRS}
     app/Inc
@@ -130,6 +137,9 @@ if(HIL_BUILD)
         ${APP_SOURCES}
         ${HAL_SOURCES}
         app/Src/hil_protocol.c
+    )
+    set_target_properties(${PROJECT_NAME}-hil PROPERTIES
+        SUFFIX ".elf"
     )
     target_include_directories(${PROJECT_NAME}-hil PRIVATE
         ${MCU_INCLUDE_DIRS}
