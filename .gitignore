@@ -3,6 +3,7 @@
 # ── Build directories ────────────────────────────────────────────────
 build/
 build-*/
+build_*/
  
 # ── Compiled firmware artifacts (CI generates these as downloadable artifacts)
 *.elf

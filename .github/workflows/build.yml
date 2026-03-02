@@ -25,6 +25,7 @@ jobs:
 
       - name: Configure
         run: |
+          rm -rf build
           cmake -S . -B build -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE=cmake/toolchain-arm-none-eabi.cmake \
             -DCMAKE_BUILD_TYPE=Debug
@@ -57,6 +58,7 @@ jobs:
 
       - name: Configure test build
         run: |
+          rm -rf build_test
           cmake -S . -B build_test -G Ninja \
             -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_TOOLCHAIN_FILE=""
