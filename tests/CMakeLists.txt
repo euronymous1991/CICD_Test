@@ -3,9 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 include(FetchContent)
 FetchContent_Declare(
     unity
-    GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity.git
-    GIT_TAG        v2.6.0
-    GIT_SHALLOW    TRUE
+    URL https://github.com/ThrowTheSwitch/Unity/archive/refs/tags/v2.6.0.tar.gz
 )
 FetchContent_MakeAvailable(unity)
 
