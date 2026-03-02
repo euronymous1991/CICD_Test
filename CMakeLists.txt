@@ -28,6 +28,10 @@ if(NOT CMAKE_CROSSCOMPILING)
     return()
 endif()
 
+# -- Version info (git hash + build date) -----------------------------------
+# Runs at every cmake configure step, generates build/generated/version_git.h
+include(cmake/version.cmake)
+
 # -- Global compiler flags --------------------------------------------------
 # NOTE: Each generator expression is on its own line with a single flag.
 # Multiple flags inside one $<...> break on Windows because cmd.exe treats
@@ -91,20 +95,18 @@ add_executable(${PROJECT_NAME}
     ${HAL_SOURCES}
 )
 
-# Explicitly name the output file with .elf extension for clarity.
-# $<TARGET_FILE:${PROJECT_NAME}> in post-build commands picks this up
-# automatically, so objcopy / objsize need no changes.
 set_target_properties(${PROJECT_NAME} PROPERTIES
     SUFFIX ".elf"
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${MCU_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR}/generated   # version_git.h lives here
     app/Inc
     bsp/Inc
 )
 
-# Suppress warnings on ST HAL library sources — external code we do not
+# Suppress warnings on ST HAL library sources - external code we do not
 # control. -w disables all warnings for these files only. Our app/ and
 # bsp/ sources still get full -Wall -Wextra treatment.
 set_source_files_properties(${HAL_SOURCES} PROPERTIES
@@ -143,6 +145,7 @@ if(HIL_BUILD)
     )
     target_include_directories(${PROJECT_NAME}-hil PRIVATE
         ${MCU_INCLUDE_DIRS}
+        ${CMAKE_BINARY_DIR}/generated
         app/Inc
         bsp/Inc
     )
