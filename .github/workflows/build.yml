@@ -73,8 +73,7 @@ jobs:
         run: |
           lcov --capture \
                --directory build_test \
-               --output-file coverage.info \
-               --ignore-errors mismatch
+               --output-file coverage.info
           lcov --remove coverage.info \
                '*/unity/*' '*/tests/*' '*/_deps/*' '/usr/*' \
                --output-file coverage.info
