@@ -1,0 +1,27 @@
+# .clang-format
+---
+BasedOnStyle:    Google
+IndentWidth:     4
+ColumnLimit:     100
+UseTab:          Never
+ 
+# Braces on new line (common embedded/C convention)
+BreakBeforeBraces:      Allman
+ 
+# Never allow short forms — always use braces
+AllowShortFunctionsOnASingleLine:   None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine:       false
+ 
+# Alignment for readability in struct initializers and macros
+AlignConsecutiveAssignments:  Consecutive
+AlignConsecutiveMacros:       Consecutive
+AlignConsecutiveDeclarations: None
+ 
+# Includes
+SortIncludes:    CaseSensitive
+IncludeBlocks:   Regroup
+ 
+# Pointer style: int *ptr (not int* ptr)
+PointerAlignment: Right
+...
